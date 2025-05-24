@@ -1,0 +1,32 @@
+name: XGHAC Monitoring
+
+on: [push, pull_request]
+
+jobs:
+  xghac-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Collect telemetry
+        id: metrics
+        uses: xghac/telemetry-action@v1
+        with:
+          dependency-analysis: true
+          system-metrics: true
+          
+      - name: Run prediction
+        uses: xghac/prediction-action@v1
+        with:
+          model-version: '1.5'
+          threshold: '0.65'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Post explanation
+        if: failure()
+        uses: xghac/explanation-action@v1
+        with:
+          check-name: 'Failure Analysis'
+          annotations: ${{ steps.predict.outputs.explanations }}

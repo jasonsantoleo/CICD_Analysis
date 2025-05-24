@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from typing import List, Dict, Any
+
 import Gemini_utils
 # Page configuration
 st.set_page_config(page_title="CI/CD Log Anomalies", layout="wide")
